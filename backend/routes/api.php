@@ -6,7 +6,8 @@ use App\Http\Controllers\ProductController;
 
 
 //Laravel shortcut that will automatically create all the RESTful routes for your ProductController.
-Route::resource('products',ProductController::class);
+//Route::resource('products',ProductController::class);
+Route::apiResource('products', ProductController::class);
 
 
 

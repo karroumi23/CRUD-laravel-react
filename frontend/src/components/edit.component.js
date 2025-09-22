@@ -5,21 +5,26 @@ import { useNavigate, useParams } from "react-router-dom"; //useNavigate : to re
 
 
 export default function EditProduct() {
-  const navigate = useNavigate();
-  const { id } = useParams();
+  const navigate = useNavigate(); //Redirection 
+  const { id } = useParams(); //read dynamic parts of the URL (Example : path="/products/:id" ...)
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [image, setImage] = useState(null);
+  const [title, setTitle] = useState(''); //title → the current value of the state 
+                                          //setTitle → a function to update that value.
+                                          //At the beginning: title = '' .
+                                          //If you later call: setTitle('New Product');  ==> title = 'New Product'.
+                                           
+                                          //to use in form : <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+   const [description, setDescription] = useState('');
+   const [image, setImage] = useState(null);
 
   //get data 
   useEffect(() => {
     fetchProduct();
-  })
+  }, [])
 
-  //get the product.
+  //get the product. //arow fun
   const fetchProduct = async () => {
-   await axios.get('http://127.0.0.1:8000/api/products' + id)
+   await axios.get('http://127.0.0.1:8000/api/products/' + id)
               .then(({ data }) => {
                     const { title, description } = data.product
                     setTitle(title)
@@ -36,9 +41,10 @@ export default function EditProduct() {
   }
 
   //للتأكد من تحميل البيانات بالكامل في حالة وجود اتصال إنترنت بطيء
-  const updateProduct = async (e) => {
-        e.prevetDefault();
-        const formData = new formData();
+  const updateProduct = async (e) => { //async :  That means the function can pause while waiting for something (like an API call,file..) without blocking the rest of your app.
+        e.prevetDefault(); //توقف إعادة تحميل الصفحة عند إرسال النموذج
+        
+        const formData = new FormData();  // obligatoir (FormData() F majuscule)
         formData.append('_method', 'PATCH')
         formData.append('title', title)
         formData.append('description', description)

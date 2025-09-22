@@ -13,7 +13,8 @@ class ProductController extends Controller
 
     public function index()
     {
-        return Product::select('title','description','image')->get();
+        //select id becouse its importent when u need to delete product
+        return Product::select('id','title','description','image')->get();
     }
 
 
@@ -29,13 +30,14 @@ class ProductController extends Controller
             'description'=>'required',
             'image'=>'required|image',
         ]);
-        $imageName = Str::random().'.'.$request->image->getClientOrginalExtension();
+        $imageName = Str::random().'.'.$request->image->getClientOriginalExtension();
         //store the images : in storage (public)-> create folder(product)inside it file (image),with this name($imageName)
         Storage::disk('public')->putFileAs( //u have to run this command (php artisan storage:link)
             'product/image',     // folder
-            $request->file('image'), // uploaded file
+            $request->image, // uploaded file
             $imageName           // custom name
         );
+        Product::create($request->post()+['image'=>$imageName]);
 
         return response()->json([
              'message'=>'item added successfully'
@@ -71,7 +73,7 @@ class ProductController extends Controller
             }
 
             //create new image
-            $imageName = Str::random().'.'.$request->image->getClientOrginalExtension();
+            $imageName = Str::random().'.'.$request->image->getClientOriginalExtension();
             //store the images : in storage (public)-> create folder(product)inside it file (image),with this name($imageName)
             Storage::disk('public')->putFileAs(
                 'product/image',     // folder
@@ -93,11 +95,13 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         if ($product->image) { //check if there is a image
-            $exist = Storage::disk('public')->exists('product/image/{$request->image}');
+            $exist = Storage::disk('public')->exists('product/image/{$product->image}');
             if ($exist) { //if there is delete it
-              Storage::disk('public')->delete('product/image/{$request->image}');
+              Storage::disk('public')->delete('product/image/{$product->image}');
             }
         }
+
+        
         $product->delete();
 
         return response()->json([
