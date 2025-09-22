@@ -29,7 +29,7 @@ export default function EditProduct() {
                     const { title, description } = data.product
                     setTitle(title)
                     setDescription(description)
-                    navigate('/') //Redirection 
+                   
               }).catch(({ response: { data } }) => {
                     console.log(data.message)
               })
@@ -42,7 +42,7 @@ export default function EditProduct() {
 
   //للتأكد من تحميل البيانات بالكامل في حالة وجود اتصال إنترنت بطيء
   const updateProduct = async (e) => { //async :  That means the function can pause while waiting for something (like an API call,file..) without blocking the rest of your app.
-        e.prevetDefault(); //توقف إعادة تحميل الصفحة عند إرسال النموذج
+        e.preventDefault(); //توقف إعادة تحميل الصفحة عند إرسال النموذج
         
         const formData = new FormData();  // obligatoir (FormData() F majuscule)
         formData.append('_method', 'PATCH')
@@ -54,7 +54,7 @@ export default function EditProduct() {
         
 
      //when u get the data from user go to this line and send this data(formData)
-     await axios.post('http://127.0.0.1:8000/api/products' + id, formData)
+     await axios.post(`http://127.0.0.1:8000/api/products/${id}`, formData)
                 .then(({ data }) => {
                   console.log(data.message)
                   navigate('/') //Redirection 
